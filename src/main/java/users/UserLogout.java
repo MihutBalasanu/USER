@@ -25,7 +25,7 @@ public class UserLogout {
             switch (option) {
                 case 1:
 
-                        user = userLogin.getValidatedUser().orElse(new User());
+                        user = userLogin.getValidatedUser().orElseThrow(IllegalArgumentException::new);
 
                         System.out.println(user.getUsername() + " you are successfully logged out!");
                         userLogin.setLogged(false);

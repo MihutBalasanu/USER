@@ -1,7 +1,6 @@
 package users;
 
 import utils.Constants;
-import utils.FileReader;
 import utils.MainMenu;
 
 import java.util.*;
@@ -38,6 +37,7 @@ public class UserLogin {
     public Optional<User> getValidatedUser() {
         return validatedUser;
     }
+
 
     public boolean isLogged() {
         return isLogged;
@@ -89,7 +89,7 @@ public class UserLogin {
     }
 
     public Optional<User> verifyLogin(User user) {
-        for (User i : FileReader.readFromFile(Constants.FILE_PATH)) {
+        for (User i : UserFileReader.readFromFile(Constants.USER_FILE_PATH)) {
             if (i.equals(user)) {
                 return Optional.of(user);
             }
