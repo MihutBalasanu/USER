@@ -11,7 +11,7 @@ public class AccountMenu {
 
     private AccountService accountService = AccountService.getInstance();
     private AccountWriter accountWriter = new AccountWriter();
-    private UserLogin userLogin = UserLogin.getInstance();
+    private UserLogin userLogin = new UserLogin();
     private User user = userLogin.getValidatedUser().orElseThrow(IllegalArgumentException::new);
 
 
@@ -21,7 +21,6 @@ public class AccountMenu {
         int option;
         do {
             displayUserOptions();
-            System.out.print("Choose option: ");
             option = scanner.nextInt();
             switch (option) {
                 case 1:

@@ -1,43 +1,33 @@
 package users;
 
-import utils.Constants;
 import utils.MainMenu;
 
 import java.util.*;
 
 public class UserLogin {
 
-    private static UserLogin userLogin = null;
-    private Optional<User> validatedUser;
-    boolean isLogged = false;
+    private static Optional<User> validatedUser;
+    private static boolean isLogged = false;
     User user = new User();
 
 
-    private UserLogin(){
-
-    }
-
-    public static UserLogin getInstance(){
-        if(userLogin == null){
-            userLogin = new UserLogin();
-        }
-        return userLogin;
-    }
-
-    public void run() {
+    public void run(Scanner scanner) {
         if (!isLogged) {
-            login();
+            login(scanner);
         } else {
             UserLogout userLogout = new UserLogout();
-            userLogout.logout();
+            userLogout.logout(scanner);
         }
-        run();
+        run(scanner);
     }
 
     public Optional<User> getValidatedUser() {
         return validatedUser;
     }
 
+    public void setValidatedUser(Optional<User> validatedUser) {
+        this.validatedUser = validatedUser;
+    }
 
     public boolean isLogged() {
         return isLogged;
@@ -47,55 +37,59 @@ public class UserLogin {
         isLogged = logged;
     }
 
-    public void login() {
+    public void login(Scanner scanner) {
         MainMenu mainMenu = new MainMenu();
         mainMenu.displayLoginConsole();
-        Scanner scanner = new Scanner(System.in);
+
         try {
             int option = scanner.nextInt();
             switch (option) {
                 case 1:
-                    UserConsoleReader userConsoleReader = new UserConsoleReader();
-                    user = userConsoleReader.readUserData();
+                    System.out.println("Add login details: ");
+                    System.out.println("Username: ");
+                    String username = scanner.next();
+                    System.out.println("Password: ");
+                    String password = scanner.next();
+                    user.setUsername(username);
+                    user.setPassword(password);
                     validatedUser = verifyLogin(user);
                     break;
 
                 case 2:
+                    System.out.println("You are succesfully exit!");
                     System.exit(0);
                     break;
 
                 default:
                     System.out.println("Not a valid option");
-                    login();
+                    login(scanner);
                     break;
             }
 
-            if(validatedUser.isPresent()){
-                userLogin.validatedUser = validatedUser;
+            if (validatedUser.isPresent()) {
+
                 isLogged = true;
                 System.out.println("Welcome user: " + user.getUsername() + "!");
-                validatedUser = null;
+
             } else {
                 System.out.println("Wrong username / password!");
-                login();
+                login(scanner);
             }
 
 
         } catch (InputMismatchException exception) {
             System.out.println("Try again!");
-            mainMenu.displayLoginConsole();
+            System.out.println("Invalid line: " + scanner.nextLine());
         }
-        scanner.close();
     }
 
     public Optional<User> verifyLogin(User user) {
-        for (User i : UserFileReader.readFromFile(Constants.USER_FILE_PATH)) {
-            if (i.equals(user)) {
+        for (User user1 : UserFileReader.getInstance().getUsers()) {
+            if (user1.equals(user)) {
                 return Optional.of(user);
             }
         }
         return Optional.empty();
     }
-
 }
 

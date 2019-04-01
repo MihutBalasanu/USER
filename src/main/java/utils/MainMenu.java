@@ -15,6 +15,4 @@ public class MainMenu {
         System.out.println("1. Logout");
         System.out.print("Select menu option: ");
     }
-
-
 }
