@@ -3,32 +3,53 @@ package accounts;
 import users.User;
 import users.UserLogin;
 import utils.Currency;
-import java.util.InputMismatchException;
+import java.math.BigDecimal;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class AccountConsoleReader {
 
-    UserLogin userLogin = new UserLogin();
+    private UserLogin userLogin = new UserLogin();
+    private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
 
-    public Account readAccountData() {
+
+    public Account readAccountData(Scanner scanner) {
         Account account = new Account();
-        Scanner scanner = new Scanner(System.in);
         System.out.println("Add account details.");
         System.out.println("Amount to put:");
-        account.setBalance(scanner.nextBigDecimal());
-        System.out.println("Currency:");
-        String currency = scanner.nextLine();
-        try {
-            account.setAccountType(String.valueOf(Currency.valueOf(currency)));
-        } catch (InputMismatchException e) {
-            System.out.println("Choose a proper currency!");
+
+        BigDecimal amount = null;
+        while (amount == null || amount.signum() != 1) {
+            try {
+                amount = scanner.nextBigDecimal();
+            } catch (IllegalArgumentException e) {
+//                System.out.println("Input a proper value: " + scanner.nextLine());
+                LOGGER.warning("Input a proper value: " + scanner.nextLine());
+            }
         }
-        User user = userLogin.getValidatedUser().orElseThrow(IllegalArgumentException::new);
+        account.setBalance(amount);
+
+        System.out.println("Currency:");
+        String currency = null;
+        while (currency == null) {
+
+            currency = scanner.next();
+            try {
+                account.setAccountType(String.valueOf(Currency.valueOf(currency)));
+            } catch (IllegalArgumentException e) {
+                currency = null;
+//                System.out.println("Choose a proper currency!");
+                LOGGER.warning("Choose a proper currency!");
+
+            }
+        }
+
+        User user = userLogin.getValidatedUser().get();
         account.setUsername(user.getUsername());
 
         AccountNumber accountNumber = new AccountNumber();
-        account.setAccontNumber(String.valueOf(accountNumber));
+        account.setAccontNumber(accountNumber.generateAccountNumber());
 
         return account;
     }

@@ -1,9 +1,7 @@
 package utils;
 
-import users.UserLogin;
-import users.UserLogout;
-
 public class MainMenu {
+
 
     public void displayLoginConsole() {
         System.out.println("1. Login");
@@ -12,7 +10,14 @@ public class MainMenu {
     }
 
     public void displayLogoutConsole() {
-        System.out.println("1. Logout");
+        System.out.println("1. Display account menu");
+        System.out.println("2. Logout");
         System.out.print("Select menu option: ");
+    }
+
+    public void displayAccountMenu(){
+        System.out.println("1. Create account");
+        System.out.println("2. Display user all accounts");
+        System.out.println("3. Return");
     }
 }

@@ -2,15 +2,14 @@ package accounts;
 
 public class AccountNumber {
 
-    private static Long count = null;
+    private static Long count = 1L;
 
     public AccountNumber(){
-        generateAccountNumber();
-        count++;
+       count++;
     }
 
-    private String generateAccountNumber(){
-        String accountNumber = "RO";
+    public String generateAccountNumber(){
+        String accountNumber = "RO25BCRY3400SV";
         Long number = new Long(1000000000);
         number = number + count;
         accountNumber = accountNumber.concat(String.valueOf(number));

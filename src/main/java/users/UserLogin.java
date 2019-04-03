@@ -1,14 +1,15 @@
 package users;
 
 import utils.MainMenu;
-
 import java.util.*;
+import java.util.logging.Logger;
 
 public class UserLogin {
 
     private static Optional<User> validatedUser;
     private static boolean isLogged = false;
-    User user = new User();
+    private User user = new User();
+    private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
 
     public void run(Scanner scanner) {
@@ -56,12 +57,14 @@ public class UserLogin {
                     break;
 
                 case 2:
-                    System.out.println("You are succesfully exit!");
+//                    System.out.println("You are succesfully exit!");
+                    LOGGER.info("You are succesfully exit!");
                     System.exit(0);
                     break;
 
                 default:
-                    System.out.println("Not a valid option");
+//                    System.out.println("Not a valid option");
+                    LOGGER.warning("Not a valid option!");
                     login(scanner);
                     break;
             }
@@ -69,17 +72,21 @@ public class UserLogin {
             if (validatedUser.isPresent()) {
 
                 isLogged = true;
-                System.out.println("Welcome user: " + user.getUsername() + "!");
+//                System.out.println("Welcome user: " + user.getUsername() + "!");
+                LOGGER.info("Welcome user: " + user.getUsername() + "!");
 
             } else {
-                System.out.println("Wrong username / password!");
+//                System.out.println("Wrong username / password!");
+                LOGGER.warning("Wrong username / password!");
                 login(scanner);
             }
 
 
         } catch (InputMismatchException exception) {
-            System.out.println("Try again!");
-            System.out.println("Invalid line: " + scanner.nextLine());
+//            System.out.println("Try again!");
+//            System.out.println("Invalid line: " + scanner.nextLine());
+            LOGGER.warning("Try again!");
+            LOGGER.warning("Invalid line: " + scanner.nextLine());
         }
     }
 

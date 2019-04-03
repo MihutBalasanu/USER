@@ -3,58 +3,71 @@ package accounts;
 import users.User;
 import users.UserLogin;
 import utils.Constants;
-
-import java.util.List;
-import java.util.Scanner;
+import utils.MainMenu;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class AccountMenu {
 
-    private AccountService accountService = AccountService.getInstance();
     private AccountWriter accountWriter = new AccountWriter();
     private UserLogin userLogin = new UserLogin();
-    private User user = userLogin.getValidatedUser().orElseThrow(IllegalArgumentException::new);
+    private MainMenu mainMenu = new MainMenu();
+    private AccountConsoleReader accountConsoleReader = new AccountConsoleReader();
+    private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
+    public void accountOperations(Scanner scanner) {
 
-    public void displayAccountMenu() {
-
-        Scanner scanner = new Scanner(System.in);
+        mainMenu.displayAccountMenu();
+        try{
         int option;
-        do {
-            displayUserOptions();
-            option = scanner.nextInt();
+        System.out.println("Select your option: ");
+        option = scanner.nextInt();
             switch (option) {
                 case 1:
-                    displayUserAllAccounts();
+                    createUserAccount(scanner);
                     break;
                 case 2:
-                    createUserAccount();
+                    displayUserAllAccounts(userLogin.getValidatedUser().get());
                     break;
-                case 0:
+                case 3:
+                    userLogin.run(scanner);
+                    break;
+                default:
+//                    System.out.println("Not a valid option!");
+                    LOGGER.warning("Not a valid option!");
+                    accountOperations(scanner);
                     break;
             }
-        } while (option != 0);
+        } catch (InputMismatchException exception) {
+//            System.out.println("Invalid input: " + scanner.nextLine());
+              LOGGER.warning("Invalid input: " + scanner.nextLine());
 
-    }
-
-    private void displayUserOptions() {
-        System.out.println("1. Display all user accounts");
-        System.out.println("2. Create account");
-        System.out.println("0. Exit");
-        System.out.println("Select your option");
-    }
-
-    private void displayUserAllAccounts() {
-
-        List<Account> allUserAccounts = accountService.getAllUserAcounts(user);
-        for (Account account : allUserAccounts) {
-            accountWriter.displayAccountData(account);
+        } catch (NoSuchElementException e) {
+//            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
         }
     }
 
-    private void createUserAccount(){
+    private void displayUserAllAccounts(User user) {
 
-        Account account = accountService.createAccount();
+        Set<Account> userAccountSet = new HashSet<>();
+        for (Account account : AccountFileReader.readFromFile(Constants.ACCOUNT_FILE_PATH)) {
+            if (user.getUsername().equals(account.getUsername())) {
+                userAccountSet.add(account);
+                System.out.println(accountWriter.displayAccountData(account));
+            }
+        }
+        if(userAccountSet.isEmpty()){
+//            System.out.println(user.getUsername() + " has no account yet!");
+            LOGGER.info(user.getUsername() + " has no account yet!");
+        }
+    }
+
+    private Account createUserAccount(Scanner scanner){
+
+        Account account = accountConsoleReader.readAccountData(scanner);
         AccountFileWriter.writeOnFile(Constants.ACCOUNT_FILE_PATH, accountWriter.displayAccountData(account));
+        return account;
     }
 }
 

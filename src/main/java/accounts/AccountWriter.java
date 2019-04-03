@@ -7,7 +7,6 @@ public class AccountWriter {
                 account.getUsername() + " " +
                 account.getBalance() + " " +
                 account.getAccountType();
-        System.out.println(str);
         return str;
     }
 }
