@@ -1,10 +1,14 @@
 package users;
 
+import accounts.Account;
+
+import java.util.List;
 import java.util.Objects;
 
 public class User {
     private String username;
     private String password;
+    private List<Account> userAccountList;
 
     public User() {
     }
@@ -12,6 +16,18 @@ public class User {
     public User(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    public User(List<Account> userAccountList) {
+        this.userAccountList = userAccountList;
+    }
+
+    public List<Account> getUserAccountList() {
+        return userAccountList;
+    }
+
+    public void setUserAccountList(List<Account> userAccountList) {
+        this.userAccountList = userAccountList;
     }
 
     public String getUsername() {

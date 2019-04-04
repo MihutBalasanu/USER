@@ -1,45 +1,53 @@
 package accounts;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import utils.FileReader;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+
 public class AccountFileReader {
 
-    private static List<Account> accountList = new ArrayList<>();
+    private static List<Account> accounts = new ArrayList<>();
+    private Account account = new Account();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
+    private static AccountFileReader accountFileReader;
 
-    public static List<Account> readFromFile(String path) {
-        try (BufferedReader reader = new BufferedReader(new java.io.FileReader(path))) {
-            String line;
-            int numberOfLines = 1;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(" " );
-                if (parts.length >= 4) {
-                    String accontNumber = parts[0];
-                    String username = parts[1];
-                    BigDecimal balance = new BigDecimal(parts[2]);
-                    String accountType = parts[3];
+    private AccountFileReader(){
 
-                    Account account = new Account(accontNumber,username,balance,accountType);
-                    accountList.add(account);
-                } else {
-//                    System.out.println( "Wrong information at line " + numberOfLines + " !" );
-                      LOGGER.warning("Wrong information at line " + numberOfLines + " !" );
-                }
-                numberOfLines++;
-            }
-        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-            LOGGER.warning(e.getMessage());
-        } catch (IOException e) {
-//            e.printStackTrace();
-            LOGGER.warning(e.getMessage());
+    }
+
+    public static AccountFileReader getInstance() {
+        if (accountFileReader == null) {
+            accountFileReader = new AccountFileReader();
         }
-        return accountList;
+        return accountFileReader;
+    }
+
+    public List<Account> getAccounts(String path) {
+
+        List<String> lines = FileReader.readFromFile(path);
+        int numberOfLines = 1;
+        for(String line : lines){
+            String[] parts = line.split(" ");
+            if(parts.length >= 4){
+                String accountNumber = parts[0];
+                String username = parts[1];
+                BigDecimal balance = new BigDecimal(parts[2]);
+                String accountType = parts[3];
+                account.setAccontNumber(accountNumber);
+                account.setUsername(username);
+                account.setBalance(balance);
+                account.setAccountType(accountType);
+                accounts.add(account);
+            }else{
+                System.out.println("Wrong information at line " + numberOfLines + " !");
+                LOGGER.warning("Wrong information at line " + numberOfLines + " !");
+            }
+            numberOfLines++;
+        }
+        return accounts;
     }
 }

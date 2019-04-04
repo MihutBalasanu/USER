@@ -18,6 +18,7 @@ public class MainMenu {
     public void displayAccountMenu(){
         System.out.println("1. Create account");
         System.out.println("2. Display user all accounts");
-        System.out.println("3. Return");
+        System.out.println("3. Transfer between your accounts");
+        System.out.println("4. Return");
     }
 }

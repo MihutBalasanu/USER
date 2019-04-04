@@ -3,7 +3,10 @@ package accounts;
 import users.User;
 import users.UserLogin;
 import utils.Constants;
+import utils.Currency;
 import utils.MainMenu;
+
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -14,6 +17,8 @@ public class AccountMenu {
     private MainMenu mainMenu = new MainMenu();
     private AccountConsoleReader accountConsoleReader = new AccountConsoleReader();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
+    private AccountPayment accountPayment = new AccountPayment();
+
 
     public void accountOperations(Scanner scanner) {
 
@@ -27,9 +32,26 @@ public class AccountMenu {
                     createUserAccount(scanner);
                     break;
                 case 2:
-                    displayUserAllAccounts(userLogin.getValidatedUser().get());
+                    if(userLogin.getValidatedUser().isPresent()) {
+                        displayUserAllAccounts(userLogin.getValidatedUser().get());
+                    }
                     break;
                 case 3:
+                    String currency = accountPayment.setTransferCurrency(scanner);
+                    BigDecimal amount = accountPayment.setTransferAmount(scanner);
+                    Account accountToPayFrom = accountPayment.setAccountToPayFrom(scanner,currency);
+                    Account accountToPayInto = accountPayment.setAccountToPayInto(scanner,accountToPayFrom,currency);
+                    boolean enoghMoneyForTransfer = accountPayment.verifyEnoughAmountForPayment(scanner,amount,currency);
+                    if(enoghMoneyForTransfer){
+                        accountToPayFrom.setBalance(accountToPayFrom.getBalance().subtract(amount));
+                        accountToPayInto.setBalance(accountToPayInto.getBalance().add(amount));
+                        LOGGER.info("You succesfully transfer the amount: " + amount + currency);
+                    }else{
+                        LOGGER.warning("Not enough money in your account!");
+
+                    }
+                    break;
+                case 4:
                     userLogin.run(scanner);
                     break;
                 default:
@@ -48,16 +70,32 @@ public class AccountMenu {
         }
     }
 
+    public List<Account> setUserLoginAllAccounts() {
+        List<Account> userLoginAllAccountsList = new ArrayList<>();
+        List<Account> accounts = AccountFileReader.getInstance().getAccounts(Constants.ACCOUNT_FILE_PATH);
+
+        if(userLogin.getValidatedUser().isPresent()) {
+            for (Account account : accounts) {
+                if (userLogin.getValidatedUser().get().getUsername().equals(account.getUsername())) {
+                    userLoginAllAccountsList.add(account);
+                }
+            }
+        }
+        return userLoginAllAccountsList;
+    }
+
     private void displayUserAllAccounts(User user) {
 
-        Set<Account> userAccountSet = new HashSet<>();
-        for (Account account : AccountFileReader.readFromFile(Constants.ACCOUNT_FILE_PATH)) {
+        List<Account> userAccountList = new ArrayList<>();
+        List<Account> accounts = AccountFileReader.getInstance().getAccounts(Constants.ACCOUNT_FILE_PATH);
+
+        for (Account account : accounts) {
             if (user.getUsername().equals(account.getUsername())) {
-                userAccountSet.add(account);
+                userAccountList.add(account);
                 System.out.println(accountWriter.displayAccountData(account));
             }
         }
-        if(userAccountSet.isEmpty()){
+        if(userAccountList.isEmpty()){
 //            System.out.println(user.getUsername() + " has no account yet!");
             LOGGER.info(user.getUsername() + " has no account yet!");
         }
@@ -69,6 +107,7 @@ public class AccountMenu {
         AccountFileWriter.writeOnFile(Constants.ACCOUNT_FILE_PATH, accountWriter.displayAccountData(account));
         return account;
     }
+
 }
 
 

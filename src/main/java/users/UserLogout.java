@@ -3,8 +3,11 @@ package users;
 import accounts.AccountMenu;
 import utils.MainMenu;
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.logging.Logger;
+
+
 
 public class UserLogout {
 
@@ -32,6 +35,7 @@ public class UserLogout {
 //                    System.out.println(user.getUsername() + " you are successfully logged out!");
                     LOGGER.info(user.getUsername() + " you are successfully logged out!");
                     userLogin.setLogged(false);
+                    userLogin.setValidatedUser(Optional.empty());
                     break;
 
                 default:
