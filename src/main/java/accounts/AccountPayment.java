@@ -63,35 +63,35 @@ public class AccountPayment {
     }
 
     public Account chooseAccountFromList(Scanner scanner, String currency) {
-        List<Account> accountList = setUserAccontListByCurrency(currency).get();
 
-            int countAccount = 1;
-            Account[] accounts = null;
-
-            for (Account account : accountList) {
-                System.out.println(countAccount + ". " + account.getAccontNumber());
-
-                accounts[countAccount - 1] = account;
-                countAccount++;
-            }
-            System.out.println("Select the account to pay from: ");
-            int option = 0;
-            try {
-                while (option == 0) {
-                    option = scanner.nextInt();
-                    for (int i = 1; i < countAccount; i++) {
-                        if (i == option) {
-                            return accounts[i];
-                        } else {
+            if(setUserAccontListByCurrency(currency).isPresent()) {
+                List<Account> accountList = setUserAccontListByCurrency(currency).get();
+                int countAccount = 1;
+                Iterator<Account> iterator = accountList.iterator();
+                while (iterator.hasNext()) {
+                    System.out.println(countAccount++ + "." + iterator.next());
+                    countAccount++;
+                }
+                System.out.println("Select the account to pay from: ");
+                int option = 0;
+                try {
+                    while(option == 0) {
+                        option = scanner.nextInt();
+                        while (iterator.hasNext()) {
+                            if (countAccount == option) {
+                                return iterator.next();
+                            } else {
+                                countAccount++;
+                            }
                             option = 0;
                         }
                     }
+                } catch (InputMismatchException exception) {
+                    LOGGER.warning("Try again!");
+                    LOGGER.warning("Invalid input: " + scanner.nextLine());
                 }
-            } catch (InputMismatchException exception) {
-                LOGGER.warning("Try again!");
-                LOGGER.warning("Invalid input: " + scanner.nextLine());
-
-        }return null;
+            }
+       return null;
     }
 
     public Account setAccountToPayFrom(Scanner scanner, String currency){
