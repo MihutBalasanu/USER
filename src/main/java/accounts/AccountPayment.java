@@ -1,5 +1,6 @@
 package accounts;
 
+import users.User;
 import users.UserLogin;
 
 import java.math.BigDecimal;
@@ -10,7 +11,6 @@ import java.util.logging.Logger;
 public class AccountPayment {
 
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
-    private UserLogin userLogin = new UserLogin();
 
 
     public String setTransferCurrency(Scanner scanner){
@@ -27,17 +27,16 @@ public class AccountPayment {
         return currency;
     }
 
-    public Optional<List<Account>> setUserAccontListByCurrency(String currency){
+    public Optional<List<Account>> setUserAccontListByCurrency(String currency, User user){
         Optional<List<Account>> accountListsByCurrency;
         List<Account> accountListByCurrency = new ArrayList<>();
+        AccountMenu accountMenu = new AccountMenu();
         int countAccount = 0;
-        if(userLogin.getValidatedUser().isPresent()) {
-            for (Account account : userLogin.getValidatedUser().get().getUserAccountList()) {
+        for (Account account : accountMenu.setUserAllAccounts(user)) {
                 if (account.getAccountType().equals(currency)) {
                     accountListByCurrency.add(account);
                     countAccount++;
                 }
-            }
         }
         if (countAccount >= 2) {
             accountListsByCurrency = Optional.of(accountListByCurrency);
@@ -62,52 +61,76 @@ public class AccountPayment {
         return amount;
     }
 
-    public Account chooseAccountFromList(Scanner scanner, String currency) {
+    public Map<Integer,Account> displayAccountList(List<Account> accountList){
+        Map<Integer,Account> accounts = new HashMap<>();
+        int countAccount = 1;
+        for(Account account: accountList){
+            System.out.println(countAccount + "." + account);
+            accounts.put(countAccount, account);
+            countAccount++;
+        }
+        return accounts;
+    }
 
-            if(setUserAccontListByCurrency(currency).isPresent()) {
-                List<Account> accountList = setUserAccontListByCurrency(currency).get();
-                int countAccount = 1;
-                Iterator<Account> iterator = accountList.iterator();
-                while (iterator.hasNext()) {
-                    System.out.println(countAccount++ + "." + iterator.next());
-                    countAccount++;
-                }
-                System.out.println("Select the account to pay from: ");
-                int option = 0;
-                try {
-                    while(option == 0) {
-                        option = scanner.nextInt();
-                        while (iterator.hasNext()) {
-                            if (countAccount == option) {
-                                return iterator.next();
-                            } else {
-                                countAccount++;
-                            }
-                            option = 0;
-                        }
-                    }
-                } catch (InputMismatchException exception) {
-                    LOGGER.warning("Try again!");
-                    LOGGER.warning("Invalid input: " + scanner.nextLine());
+    public Account selectAccount(Scanner scanner, Map<Integer, Account> accountMap){
+
+        Account selectedAccount = null;
+        try {
+            int option = 0;
+            while (option == 0) {
+                option = scanner.nextInt();
+                if (option > 0 && option <= accountMap.size()) {
+                    selectedAccount = accountMap.get(option);
+                } else {
+                    System.out.println("Invalid input!");
                 }
             }
-       return null;
-    }
-
-    public Account setAccountToPayFrom(Scanner scanner, String currency){
-        return chooseAccountFromList(scanner,currency);
-    }
-
-    public Account setAccountToPayInto(Scanner scanner, Account accountToPayFrom, String currency) {
-        Account AccountToPayInto = null;
-        while ( AccountToPayInto == accountToPayFrom) {
-            AccountToPayInto = chooseAccountFromList(scanner,currency);
+        }catch (InputMismatchException exception) {
+            LOGGER.warning("Try again!");
+            LOGGER.warning("Invalid input: " + scanner.nextLine());
         }
-        return AccountToPayInto;
+        return selectedAccount;
     }
 
-    public boolean verifyEnoughAmountForPayment(Scanner scanner, BigDecimal amount, String currency){
-        if(amount.compareTo((setAccountToPayFrom(scanner,currency).getBalance())) > 0){
+
+    public Optional<Account> chooseAccountFromList(Scanner scanner, String currency, User user) {
+
+            Account selectedAccount = null;
+            if(setUserAccontListByCurrency(currency, user).isPresent()) {
+                List<Account> accountList = setUserAccontListByCurrency(currency,user).get();
+                Map<Integer,Account> accountMap = displayAccountList(accountList);
+               selectedAccount = selectAccount(scanner,accountMap);
+            }else {
+                LOGGER.warning("Not enough accounts to make transfers!");
+                return Optional.empty();
+            }
+            return Optional.of(selectedAccount);
+    }
+
+    public Optional<Account> setAccountToPayFrom(Scanner scanner, String currency, User user){
+        System.out.println("Select the account to pay from: ");
+        return chooseAccountFromList(scanner,currency,user);
+    }
+
+    public Optional<Account> setAccountToPayInto(Scanner scanner, Account accountToPayFrom, String currency, User user) {
+        System.out.println("Select the account to pay into: ");
+        Account selectedAccount = null;
+        if(setUserAccontListByCurrency(currency, user).isPresent()) {
+            List<Account> accountList = setUserAccontListByCurrency(currency, user).get();
+            accountList.remove(accountToPayFrom);
+            Map<Integer,Account> accountMap = displayAccountList(accountList);
+            selectedAccount = selectAccount(scanner,accountMap);
+        }else {
+            LOGGER.warning("Not enough accounts to make transfers!");
+            return Optional.empty();
+        }
+        return Optional.of(selectedAccount);
+    }
+
+
+    public boolean verifyEnoughAmountForPayment(BigDecimal amount, Account account){
+        BigDecimal rest = amount.subtract(account.getBalance());
+        if(rest.signum() == 1){
             return false;
         }else{
             return true;

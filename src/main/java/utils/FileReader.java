@@ -9,10 +9,10 @@ import java.util.logging.Logger;
 
 public class FileReader {
 
-    private static List<String> listOfLines = new ArrayList<>();
+    private List<String> listOfLines = new ArrayList<>();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
-    public static List<String> readFromFile(String path){
+    public List<String> readFromFile(String path){
         try (BufferedReader reader = new BufferedReader(new java.io.FileReader(path))) {
             String line;
             while ((line = reader.readLine()) != null) {

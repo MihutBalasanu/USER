@@ -12,8 +12,8 @@ public class AccountFileWriter {
 
        try {
            BufferedWriter writer = new BufferedWriter(new java.io.FileWriter(path,true));
-               writer.newLine();
                writer.write(str);
+               writer.newLine();
                writer.close();
 
        }catch (FileNotFoundException e) {

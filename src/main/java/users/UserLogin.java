@@ -1,7 +1,6 @@
 package users;
 
 import accounts.AccountMenu;
-import utils.Constants;
 import utils.MainMenu;
 import java.util.*;
 import java.util.logging.Logger;
@@ -12,7 +11,6 @@ public class UserLogin {
     private static boolean isLogged = false;
     private User user = new User();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
-    private AccountMenu accountMenu = new AccountMenu();
 
 
     public void run(Scanner scanner) {
@@ -20,7 +18,8 @@ public class UserLogin {
             login(scanner);
         } else {
             UserLogout userLogout = new UserLogout();
-            userLogout.logout(scanner);
+            validatedUser.ifPresent(user1 -> userLogout.logout(scanner, user1));
+            setValidatedUser(Optional.empty());
         }
         run(scanner);
     }
@@ -57,6 +56,8 @@ public class UserLogin {
                     user.setUsername(username);
                     user.setPassword(password);
                     validatedUser = verifyLogin(user);
+                    AccountMenu accountMenu = new AccountMenu();
+                    validatedUser.ifPresent(accountMenu::setUserAllAccounts);
                     break;
 
                 case 2:
@@ -71,7 +72,6 @@ public class UserLogin {
             }
 
             if (validatedUser.isPresent()) {
-
                 isLogged = true;
                 LOGGER.info("Welcome user: " + user.getUsername() + "!");
 
@@ -80,7 +80,6 @@ public class UserLogin {
                 login(scanner);
             }
 
-
         } catch (InputMismatchException exception) {
             LOGGER.warning("Try again!");
             LOGGER.warning("Invalid line: " + scanner.nextLine());
@@ -88,13 +87,16 @@ public class UserLogin {
     }
 
     public Optional<User> verifyLogin(User user) {
-        for (User user1 : UserFileReader.getInstance().getUsers(Constants.USER_FILE_PATH)) {
+
+        UserFileReader userFileReader = UserFileReader.getInstance();
+        for (User user1 : userFileReader.getUsers()) {
                 if (user1.equals(user)) {
-                user.setUserAccountList(accountMenu.setUserLoginAllAccounts());
                 return Optional.of(user);
             }
         }
         return Optional.empty();
     }
+
+
 }
 

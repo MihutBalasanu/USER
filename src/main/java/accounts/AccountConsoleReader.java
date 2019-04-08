@@ -9,12 +9,9 @@ import java.util.logging.Logger;
 
 public class AccountConsoleReader {
 
-    private UserLogin userLogin = new UserLogin();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
-
-
-    public Account readAccountData(Scanner scanner) {
+    public Account readAccountData(Scanner scanner,User user) {
         Account account = new Account();
         System.out.println("Add account details.");
         System.out.println("Amount to put:");
@@ -24,7 +21,6 @@ public class AccountConsoleReader {
             try {
                 amount = scanner.nextBigDecimal();
             } catch (IllegalArgumentException e) {
-//                System.out.println("Input a proper value: " + scanner.nextLine());
                 LOGGER.warning("Input a proper value: " + scanner.nextLine());
             }
         }
@@ -33,21 +29,15 @@ public class AccountConsoleReader {
         System.out.println("Currency:");
         String currency = null;
         while (currency == null) {
-
             currency = scanner.next();
             try {
                 account.setAccountType(String.valueOf(Currency.valueOf(currency)));
             } catch (IllegalArgumentException e) {
                 currency = null;
-//                System.out.println("Choose a proper currency!");
                 LOGGER.warning("Choose a proper currency!");
-
             }
         }
-
-        User user = userLogin.getValidatedUser().get();
         account.setUsername(user.getUsername());
-
         AccountNumber accountNumber = new AccountNumber();
         account.setAccontNumber(accountNumber.generateAccountNumber());
 
