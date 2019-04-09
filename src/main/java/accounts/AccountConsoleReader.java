@@ -1,7 +1,6 @@
 package accounts;
 
 import users.User;
-import users.UserLogin;
 import utils.Currency;
 import java.math.BigDecimal;
 import java.util.Scanner;

@@ -14,6 +14,10 @@ public class Account {
 
     }
 
+    public Account(String accountType){
+        this.accountType = accountType;
+    }
+
     public Account(String accontNumber, String username, BigDecimal balance, String accountType) {
         this.accontNumber = accontNumber;
         this.username = username;

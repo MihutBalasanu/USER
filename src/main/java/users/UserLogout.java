@@ -1,11 +1,12 @@
 package users;
 
+import accounts.Account;
 import accounts.AccountMenu;
-import accounts.AccountPayment;
 import utils.Currency;
 import utils.MainMenu;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.Optional;
+import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
@@ -13,7 +14,6 @@ public class UserLogout {
 
 
     private UserLogin userLogin = new UserLogin();
-    private User user = new User();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
     private static boolean enoughAccountsForTransfer = false;
 
@@ -31,9 +31,15 @@ public class UserLogout {
             switch (option) {
                 case 1:
                     AccountMenu accountMenu = new AccountMenu();
-                    AccountPayment accountPayment = new AccountPayment();
+                    List<Account> accountUserList = accountMenu.setUserAllAccounts(user);
+                    List<Account> accountListWithSameCurrency = new ArrayList<>();
                     for (Currency currency : Currency.values()) {
-                        if (accountPayment.setUserAccontListByCurrency(String.valueOf(currency), user).isPresent()) {
+                        for (Account account : accountUserList) {
+                            if (account.getAccountType().equals(String.valueOf(currency))) {
+                                accountListWithSameCurrency.add(account);
+                            }
+                        }
+                        if (accountListWithSameCurrency.size() >= 2) {
                             enoughAccountsForTransfer = true;
                             break;
                         }

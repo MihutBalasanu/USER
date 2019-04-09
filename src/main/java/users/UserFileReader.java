@@ -14,7 +14,7 @@ public class UserFileReader {
     private static List<User> users = new ArrayList<>();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
     private static UserFileReader userFileReader;
-    FileReader fileReader = new FileReader();
+    private FileReader fileReader = new FileReader();
 
     private UserFileReader() {
         initializeUsersList();

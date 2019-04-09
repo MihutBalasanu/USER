@@ -1,8 +1,6 @@
 package accounts;
 
 import users.User;
-import users.UserLogin;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
@@ -28,6 +26,7 @@ public class AccountPayment {
     }
 
     public Optional<List<Account>> setUserAccontListByCurrency(String currency, User user){
+
         Optional<List<Account>> accountListsByCurrency;
         List<Account> accountListByCurrency = new ArrayList<>();
         AccountMenu accountMenu = new AccountMenu();
@@ -95,16 +94,16 @@ public class AccountPayment {
 
     public Optional<Account> chooseAccountFromList(Scanner scanner, String currency, User user) {
 
-            Account selectedAccount = null;
-            if(setUserAccontListByCurrency(currency, user).isPresent()) {
-                List<Account> accountList = setUserAccontListByCurrency(currency,user).get();
-                Map<Integer,Account> accountMap = displayAccountList(accountList);
-               selectedAccount = selectAccount(scanner,accountMap);
-            }else {
-                LOGGER.warning("Not enough accounts to make transfers!");
-                return Optional.empty();
-            }
-            return Optional.of(selectedAccount);
+        Account selectedAccount = null;
+        if(setUserAccontListByCurrency(currency, user).isPresent()) {
+            List<Account> accountList = setUserAccontListByCurrency(currency,user).get();
+            Map<Integer,Account> accountMap = displayAccountList(accountList);
+            selectedAccount = selectAccount(scanner,accountMap);
+        }else {
+            LOGGER.warning("Not enough accounts to make transfers!");
+            return Optional.empty();
+        }
+        return Optional.of(selectedAccount);
     }
 
     public Optional<Account> setAccountToPayFrom(Scanner scanner, String currency, User user){
@@ -126,7 +125,6 @@ public class AccountPayment {
         }
         return Optional.of(selectedAccount);
     }
-
 
     public boolean verifyEnoughAmountForPayment(BigDecimal amount, Account account){
         BigDecimal rest = amount.subtract(account.getBalance());

@@ -1,7 +1,6 @@
 package users;
 
 import accounts.Account;
-
 import java.util.List;
 import java.util.Objects;
 
