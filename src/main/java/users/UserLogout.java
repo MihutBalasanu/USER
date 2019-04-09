@@ -67,6 +67,7 @@ public class UserLogout {
         } catch (InputMismatchException exception) {
               LOGGER.warning("Try again!");
               LOGGER.warning("Invalid input: " + scanner.nextLine());
+              logout(scanner,user);
         }
     }
 }

@@ -1,6 +1,8 @@
 package accounts;
 
 import users.User;
+import utils.Currency;
+
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
@@ -9,21 +11,26 @@ import java.util.logging.Logger;
 public class AccountPayment {
 
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
+    private boolean properCurrency = false;
 
 
-    public String setTransferCurrency(Scanner scanner){
-        System.out.println("Set currency: ");
-        String currency = null;
-        while (currency == null) {
-            try {
-                currency = scanner.next();
-            } catch (InputMismatchException e) {
-                currency = null;
+    public String setTransferCurrency(Scanner scanner) {
+        System.out.println("Set currency: " + scanner.nextLine());
+        String setCurrency = null;
+        while (!properCurrency) {
+           setCurrency = scanner.nextLine();
+            for (Currency currency : Currency.values()) {
+                if (String.valueOf(currency).equals(setCurrency)) {
+                    properCurrency = true;
+                }
+            }
+            if(!properCurrency){
                 LOGGER.warning("Choose a proper currency!");
             }
         }
-        return currency;
+        return setCurrency;
     }
+
 
     public Optional<List<Account>> setUserAccontListByCurrency(String currency, User user){
 
@@ -52,9 +59,13 @@ public class AccountPayment {
         while(amount == null){
             try {
                 amount = scanner.nextBigDecimal();
+                if(amount.signum() <= 0){
+                    LOGGER.warning("Choose a proper amount!" + scanner.nextLine());
+                    amount = null;
+                }
             }catch(InputMismatchException e) {
+                LOGGER.warning("Choose a proper amount!" + scanner.nextLine());
                 amount = null;
-                LOGGER.warning("Choose a proper amount!");
             }
         }
         return amount;

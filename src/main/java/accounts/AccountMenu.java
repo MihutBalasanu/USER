@@ -41,12 +41,11 @@ public class AccountMenu {
                                 currency = accountPayment.setTransferCurrency(scanner);
                             }
                             while(!accountPayment.setUserAccontListByCurrency(currency,user).isPresent());
-//                                LOGGER.warning("You don't have at least 2 accounts of " + currency + " type to make transfers");
 
                             BigDecimal amount = accountPayment.setTransferAmount(scanner);
                             Account accountToPayFrom = accountPayment.setAccountToPayFrom(scanner,currency,user).get();;
                             Account accountToPayInto = accountPayment.setAccountToPayInto(scanner, accountToPayFrom,currency, user).get();
-//
+
                             boolean enoghMoneyForTransfer = accountPayment.verifyEnoughAmountForPayment(amount,accountToPayFrom);
 
                             if (enoghMoneyForTransfer) {
@@ -128,6 +127,7 @@ public class AccountMenu {
                 }
                 line = reader.readLine();
             }
+
             String newContent = null;
             if (oldString != null) {
                 newContent = oldContent.replaceAll(oldString, newString);
