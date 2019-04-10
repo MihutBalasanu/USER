@@ -2,6 +2,8 @@ package users;
 
 import accounts.AccountMenu;
 import utils.MainMenu;
+import utils.WrongLoginException;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -62,6 +64,7 @@ public class UserLogin {
 
                 case 2:
                     LOGGER.info("You are succesfully exit!");
+                    UserLogout.setEnoughAccountsForTransfer(false);
                     System.exit(0);
                     break;
 
@@ -76,17 +79,19 @@ public class UserLogin {
                 LOGGER.info("Welcome user: " + user.getUsername() + "!");
 
             } else {
-                LOGGER.warning("Wrong username / password!");
-                login(scanner);
+                throw new WrongLoginException("Wrong username / password!");
             }
 
         } catch (InputMismatchException exception) {
             LOGGER.warning("Try again!");
             LOGGER.warning("Invalid line: " + scanner.nextLine());
+        } catch (WrongLoginException e) {
+            e.printStackTrace();
+            login(scanner);
         }
     }
 
-    public Optional<User> verifyLogin(User user) {
+    public Optional<User> verifyLogin(User user){
 
         UserFileReader userFileReader = UserFileReader.getInstance();
         for (User user1 : userFileReader.getUsers()) {
@@ -96,7 +101,5 @@ public class UserLogin {
         }
         return Optional.empty();
     }
-
-
 }
 

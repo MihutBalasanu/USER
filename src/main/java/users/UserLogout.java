@@ -21,6 +21,10 @@ public class UserLogout {
         return enoughAccountsForTransfer;
     }
 
+    public static void setEnoughAccountsForTransfer(boolean enoughAccountsForTransfer) {
+        UserLogout.enoughAccountsForTransfer = enoughAccountsForTransfer;
+    }
+
     public void logout(Scanner scanner, User user) {
 
         MainMenu mainMenu = new MainMenu();
