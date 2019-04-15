@@ -1,10 +1,13 @@
 package accounts;
 
+import java.util.List;
+
 public class AccountNumber {
 
     private static Long count = 1L;
 
     public AccountNumber(){
+        count = getCount();
        count++;
     }
 
@@ -15,4 +18,14 @@ public class AccountNumber {
         accountNumber = accountNumber.concat(String.valueOf(number));
         return accountNumber;
     }
-}
+
+    public Long getCount(){
+        AccountFileReader accountFileReader = new AccountFileReader();
+        List<Account> accounts = accountFileReader.getAccounts();
+        for (Account account : accounts) {
+            count++;
+            }
+        return count;
+        }
+    }
+

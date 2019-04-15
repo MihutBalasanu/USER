@@ -9,23 +9,21 @@ public class MainMenu {
         System.out.print("Select menu option: ");
     }
 
-    public void displayLogoutConsole() {
+    public void displayLogoutConsoleWithTransfer() {
+        System.out.println("1. Display account menu");
+        System.out.println("2. Logout");
+        System.out.println("3. Transfer between your accounts");
+    }
+
+    public void displayLogoutConsoleWithoutTransfer() {
         System.out.println("1. Display account menu");
         System.out.println("2. Logout");
     }
 
-    public void displayAccountMenuWithTransfer(){
+    public void displayAccountMenu(){
         System.out.println("1. Create account");
         System.out.println("2. Display user all accounts");
         System.out.println("3. Return");
-        System.out.println("4. Transfer between your accounts");
+//        System.out.println("4. Transfer between your accounts");
     }
-
-    public void displayAccountMenuWithoutTransfer() {
-        System.out.println("1. Create account");
-        System.out.println("2. Display user all accounts");
-        System.out.println("3. Return");
-    }
-
-
 }

@@ -10,15 +10,7 @@ public class User {
     private List<Account> userAccountList;
 
     public User() {
-    }
 
-    public User(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public User(List<Account> userAccountList) {
-        this.userAccountList = userAccountList;
     }
 
     public List<Account> getUserAccountList() {

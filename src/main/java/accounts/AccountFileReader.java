@@ -13,18 +13,10 @@ public class AccountFileReader {
 
     private static List<Account> accounts = new ArrayList<>();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
-    private static AccountFileReader accountFileReader;
     private FileReader fileReader = new FileReader();
 
-    private AccountFileReader(){
+    public AccountFileReader(){
         initializeAccountsList();
-    }
-
-    public static AccountFileReader getInstance() {
-        if (accountFileReader == null) {
-            accountFileReader = new AccountFileReader();
-        }
-        return accountFileReader;
     }
 
     public List<Account> getAccounts() {

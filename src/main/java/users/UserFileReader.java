@@ -13,19 +13,10 @@ public class UserFileReader {
 
     private static List<User> users = new ArrayList<>();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
-    private static UserFileReader userFileReader;
     private FileReader fileReader = new FileReader();
 
-    private UserFileReader() {
+    public UserFileReader() {
         initializeUsersList();
-    }
-
-    public static UserFileReader getInstance() {
-
-        if (userFileReader == null) {
-            userFileReader = new UserFileReader();
-        }
-        return userFileReader;
     }
 
     public static List<User> getUsers() {

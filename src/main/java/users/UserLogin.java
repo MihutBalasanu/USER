@@ -3,7 +3,6 @@ package users;
 import accounts.AccountMenu;
 import utils.MainMenu;
 import utils.WrongLoginException;
-
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -26,16 +25,8 @@ public class UserLogin {
         run(scanner);
     }
 
-    public Optional<User> getValidatedUser() {
-        return validatedUser;
-    }
-
     public void setValidatedUser(Optional<User> validatedUser) {
         this.validatedUser = validatedUser;
-    }
-
-    public boolean isLogged() {
-        return isLogged;
     }
 
     public void setLogged(boolean logged) {
@@ -64,7 +55,6 @@ public class UserLogin {
 
                 case 2:
                     LOGGER.info("You are succesfully exit!");
-                    UserLogout.setEnoughAccountsForTransfer(false);
                     System.exit(0);
                     break;
 
@@ -92,8 +82,7 @@ public class UserLogin {
     }
 
     public Optional<User> verifyLogin(User user){
-
-        UserFileReader userFileReader = UserFileReader.getInstance();
+        UserFileReader userFileReader = new UserFileReader();
         for (User user1 : userFileReader.getUsers()) {
                 if (user1.equals(user)) {
                 return Optional.of(user);

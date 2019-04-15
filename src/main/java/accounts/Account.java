@@ -11,18 +11,6 @@ public class Account {
     private String accountType;
 
     public Account(){
-
-    }
-
-    public Account(String accountType){
-        this.accountType = accountType;
-    }
-
-    public Account(String accontNumber, String username, BigDecimal balance, String accountType) {
-        this.accontNumber = accontNumber;
-        this.username = username;
-        this.balance = balance;
-        this.accountType = accountType;
     }
 
     public String getAccontNumber() {

@@ -2,7 +2,6 @@ package accounts;
 
 import users.User;
 import utils.Currency;
-
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.logging.Logger;
@@ -26,19 +25,20 @@ public class AccountPayment {
             }
             if(!properCurrency){
                 LOGGER.warning("Choose a proper currency!");
+                System.out.println("Set currency!");
             }
         }
         return setCurrency;
     }
 
 
-    public Optional<List<Account>> setUserAccontListByCurrency(String currency, User user){
+    public Optional<List<Account>> setUserAccontListByCurrency(String currency, User user, Scanner scanner){
 
         Optional<List<Account>> accountListsByCurrency;
         List<Account> accountListByCurrency = new ArrayList<>();
         AccountMenu accountMenu = new AccountMenu();
         int countAccount = 0;
-        for (Account account : accountMenu.setUserAllAccounts(user)) {
+        for (Account account : user.getUserAccountList()) {
                 if (account.getAccountType().equals(currency)) {
                     accountListByCurrency.add(account);
                     countAccount++;
@@ -49,6 +49,7 @@ public class AccountPayment {
             return accountListsByCurrency;
         } else {
             LOGGER.warning("Not enough accounts to make transfers!");
+            accountMenu.accountOperations(scanner,user);
             return Optional.empty();
         }
     }
@@ -106,8 +107,8 @@ public class AccountPayment {
     public Optional<Account> chooseAccountFromList(Scanner scanner, String currency, User user) {
 
         Account selectedAccount = null;
-        if(setUserAccontListByCurrency(currency, user).isPresent()) {
-            List<Account> accountList = setUserAccontListByCurrency(currency,user).get();
+        if(setUserAccontListByCurrency(currency, user,scanner).isPresent()) {
+            List<Account> accountList = setUserAccontListByCurrency(currency,user,scanner).get();
             Map<Integer,Account> accountMap = displayAccountList(accountList);
             selectedAccount = selectAccount(scanner,accountMap);
         }else {
@@ -125,8 +126,8 @@ public class AccountPayment {
     public Optional<Account> setAccountToPayInto(Scanner scanner, Account accountToPayFrom, String currency, User user) {
         System.out.println("Select the account to pay into: ");
         Account selectedAccount = null;
-        if(setUserAccontListByCurrency(currency, user).isPresent()) {
-            List<Account> accountList = setUserAccontListByCurrency(currency, user).get();
+        if(setUserAccontListByCurrency(currency, user,scanner).isPresent()) {
+            List<Account> accountList = setUserAccontListByCurrency(currency,user,scanner).get();
             accountList.remove(accountToPayFrom);
             Map<Integer,Account> accountMap = displayAccountList(accountList);
             selectedAccount = selectAccount(scanner,accountMap);
