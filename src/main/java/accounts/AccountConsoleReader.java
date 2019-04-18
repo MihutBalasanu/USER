@@ -6,15 +6,26 @@ import java.math.BigDecimal;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+/**
+ * Reads the input data from the user when he is creating an account.
+ * @author Mihut Balasanu
+ */
 public class AccountConsoleReader {
 
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
+    /**
+     * Reads the input data from the user when he is creating an account.
+     * @param scanner instance of Scanner
+     * @param user instance of User
+     * @return an account of the user according to his inputs
+     */
     public Account readAccountData(Scanner scanner,User user) {
         Account account = new Account();
         System.out.println("Add account details.");
         System.out.println("Amount to put:");
 
+        // Block of codes that ensures a proper value input of the amount at the opening of the account
         BigDecimal amount = null;
         while (amount == null || amount.signum() != 1) {
             try {
@@ -25,6 +36,7 @@ public class AccountConsoleReader {
         }
         account.setBalance(amount);
 
+        // Block of codes that ensures a proper value input of the currency at the opening of the account
         System.out.println("Currency:");
         String currency = null;
         while (currency == null) {
@@ -37,6 +49,7 @@ public class AccountConsoleReader {
             }
         }
         account.setUsername(user.getUsername());
+        // The constructor autogenerates an account number
         AccountNumber accountNumber = new AccountNumber();
         account.setAccontNumber(accountNumber.generateAccountNumber());
 

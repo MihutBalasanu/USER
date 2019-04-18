@@ -7,11 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+/**
+ * Reads text from a file.
+ */
 public class FileReader {
 
     private List<String> listOfLines = new ArrayList<>();
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
+    /**
+     * Reads text from a file.
+     * @param path A String containing the path to the file to be read
+     * @return A list of strings as content of the file
+     * @see IOException  If an I/O error occurs
+     */
     public List<String> readFromFile(String path){
         try (BufferedReader reader = new BufferedReader(new java.io.FileReader(path))) {
             String line;
