@@ -1,30 +1,25 @@
-/**
- * Package bankapp contains the Main class with the main method.
- */
+
 package bankapp;
 
-import users.UserLogin;
-import java.util.Scanner;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import utils.HibernateUtil;
+import java.util.logging.Logger;
 
-/**
- * This program implements an application that user can access and after logging he can create a bank account,
- * display his accounts and make transfers between his accounts (of the same currency).
- *
- * @author Mihut Balasanu
- * @version 1.0
- * @since 2019-03-21
- */
+
 public class Main {
 
-    /**
-     * This is the main method which makes use of login method.
-     */
-    public static void main(String[] args) {
+    private final static Logger LOG = Logger.getLogger(Logger.class.getName());
 
-        Scanner scanner = new Scanner(System.in);
-        UserLogin userLogin = new UserLogin();
-        userLogin.login(scanner);
-        userLogin.run(scanner);
-        scanner.close();
+    public static void main(String[] args) {
+        SessionFactory sessionFactory = new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+        try {
+            sessionFactory = HibernateUtil.getSessionFactory();
+        } catch (Throwable error) {
+            LOG.severe("Failed to create sessionFactory object." + error);
+            throw new ExceptionInInitializerError(error);
+        } finally {
+            sessionFactory.close();
+        }
     }
 }
