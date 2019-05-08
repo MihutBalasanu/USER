@@ -15,13 +15,16 @@ public class Transaction {
     private Long id;
 
     @Column(name = "to_account", length = 50)
-    private Account toAccount;
+    private String toAccount;
 
     @Column(name = "balance", length = 16, nullable = false)
     private BigDecimal balance;
 
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
+
+    @Column(name = "details", length = 100)
+    private String details;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
@@ -38,11 +41,11 @@ public class Transaction {
         this.id = id;
     }
 
-    public Account getToAccount() {
+    public String getToAccount() {
         return toAccount;
     }
 
-    public void setToAccount(Account toAccount) {
+    public void setToAccount(String toAccount) {
         this.toAccount = toAccount;
     }
 
@@ -79,12 +82,13 @@ public class Transaction {
                 Objects.equals(getToAccount(), that.getToAccount()) &&
                 Objects.equals(getBalance(), that.getBalance()) &&
                 Objects.equals(getCreatedTime(), that.getCreatedTime()) &&
+                Objects.equals(details, that.details) &&
                 Objects.equals(getAccount(), that.getAccount());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getToAccount(), getBalance(), getCreatedTime(), getAccount());
+        return Objects.hash(getId(), getToAccount(), getBalance(), getCreatedTime(), details, getAccount());
     }
 
     @Override
@@ -94,6 +98,7 @@ public class Transaction {
                 ", toAccount=" + toAccount +
                 ", balance=" + balance +
                 ", createdTime=" + createdTime +
+                ", details='" + details + '\'' +
                 ", account=" + account +
                 '}';
     }

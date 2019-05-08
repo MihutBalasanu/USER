@@ -5,7 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import utils.HibernateUtil;
 import javax.persistence.Query;
-import java.util.List;
+
 
 public class UserDao extends GenericDao<User>{
 
@@ -16,13 +16,10 @@ public class UserDao extends GenericDao<User>{
         Query query = session.createQuery("from User where username = :username AND password = :password ");
         query.setParameter("username", username);
         query.setParameter("password", password);
-        List<User> list = query.getResultList();
+        User user = (User) ((org.hibernate.query.Query) query).uniqueResult();
 
         transaction.commit();
         session.close();
-        if(list.size() > 0){
-            return list.get(0);
-        }
-        return null;
+        return user;
     }
 }

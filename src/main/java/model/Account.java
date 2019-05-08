@@ -15,12 +15,12 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "account_number", length = 24, nullable = false)
-    private String accontNumber;
+    private String accountNumber;
 
     @Column(name = "balance", length = 16, nullable = false)
     private BigDecimal balance;
@@ -34,10 +34,26 @@ public class Account {
     @Column(name = "updated_time")
     private LocalDateTime updatedTime;
 
-    @OneToMany(mappedBy ="transaction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy ="account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Transaction> transactions;
 
+    private String currency;
+
     public Account(){
+    }
+
+    public Account(String accountNumber, BigDecimal balance, String currency) {
+        this.accountNumber = accountNumber;
+        this.balance = balance;
+        this.currency = currency;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
     }
 
     public Long getId() {
@@ -64,13 +80,13 @@ public class Account {
         this.updatedTime = updatedTime;
     }
 
-    public String getAccontNumber() {
-        return accontNumber;
+    public String getAccountNumber() {
+        return accountNumber;
     }
 
 
-    public void setAccontNumber(String accontNumber) {
-        this.accontNumber = accontNumber;
+    public void setAccountNumber(String accontNumber) {
+        this.accountNumber = accontNumber;
     }
 
 
@@ -115,7 +131,7 @@ public class Account {
         Account account = (Account) o;
         return Objects.equals(getId(), account.getId()) &&
                 Objects.equals(getUser(), account.getUser()) &&
-                Objects.equals(getAccontNumber(), account.getAccontNumber()) &&
+                Objects.equals(getAccountNumber(), account.getAccountNumber()) &&
                 Objects.equals(getBalance(), account.getBalance()) &&
                 Objects.equals(getAccountType(), account.getAccountType()) &&
                 Objects.equals(getCreatedTime(), account.getCreatedTime()) &&
@@ -125,7 +141,7 @@ public class Account {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUser(), getAccontNumber(), getBalance(), getAccountType(), getCreatedTime(), getUpdatedTime(), getTransactions());
+        return Objects.hash(getId(), getUser(), getAccountNumber(), getBalance(), getAccountType(), getCreatedTime(), getUpdatedTime(), getTransactions());
     }
 
     @Override
@@ -133,7 +149,7 @@ public class Account {
         return "Account{" +
                 "id=" + id +
                 ", user=" + user +
-                ", accontNumber='" + accontNumber + '\'' +
+                ", accontNumber='" + accountNumber + '\'' +
                 ", balance=" + balance +
                 ", accountType='" + accountType + '\'' +
                 ", createdTime=" + createdTime +

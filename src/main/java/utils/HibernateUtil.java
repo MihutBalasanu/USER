@@ -9,7 +9,7 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateUtil {
 
-private static SessionFactory sessionFactory;
+    private static SessionFactory sessionFactory;
     private static StandardServiceRegistry registry;
 
     private static void initSession(){

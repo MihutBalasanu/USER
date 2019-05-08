@@ -28,11 +28,14 @@ public class User {
     @Column(name = "updated_time")
     private LocalDateTime updatedTime;
 
-    @OneToMany(mappedBy ="account", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy ="user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Account> accounts;
 
-    @OneToMany(mappedBy ="notification", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy ="user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Notification> notifications;
+
+    @OneToOne(mappedBy = "user")
+    private Person person;
 
     public User() {
     }
@@ -93,6 +96,14 @@ public class User {
         this.notifications = notifications;
     }
 
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,12 +115,13 @@ public class User {
                 Objects.equals(getCreatedTime(), user.getCreatedTime()) &&
                 Objects.equals(getUpdatedTime(), user.getUpdatedTime()) &&
                 Objects.equals(getAccounts(), user.getAccounts()) &&
-                Objects.equals(getNotifications(), user.getNotifications());
+                Objects.equals(getNotifications(), user.getNotifications()) &&
+                Objects.equals(getPerson(), user.getPerson());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUsername(), getPassword(), getCreatedTime(), getUpdatedTime(), getAccounts(), getNotifications());
+        return Objects.hash(getId(), getUsername(), getPassword(), getCreatedTime(), getUpdatedTime(), getAccounts(), getNotifications(), getPerson());
     }
 
     @Override
@@ -122,6 +134,7 @@ public class User {
                 ", updatedTime=" + updatedTime +
                 ", accounts=" + accounts +
                 ", notifications=" + notifications +
+                ", person=" + person +
                 '}';
     }
 }
