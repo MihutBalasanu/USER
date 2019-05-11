@@ -1,9 +1,11 @@
 package service;
 
 import dao.AccountDao;
+import dao.NotificationDao;
 import dao.TransactionDao;
 import dao.UserDao;
 import model.Account;
+import model.Notification;
 import model.Transaction;
 import model.User;
 import utils.AccountValidator;
@@ -20,6 +22,7 @@ public class AccountService {
     private AccountDao accountDao = new AccountDao();
     private UserDao userDao;
     private TransactionDao transactionDao;
+    private NotificationDao notificationDao;
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
     public AccountService() {
@@ -104,14 +107,16 @@ public class AccountService {
         } catch (NumberFormatException err) {
             throw new MoneyTransferException("Amount of money should be a positive number", err);
         }
-        if (transferMoney(fromAccountName, toAccountName, amount)) {
+        System.out.println("Details about payment: ");
+        String details = scanner.nextLine();
+        if (transferMoney(fromAccountName, toAccountName, amount, details)) {
             LOGGER.info("Transaction completed successfully!");
         } else {
             LOGGER.warning("Transaction failed!");
         }
     }
 
-    private boolean transferMoney(String fromAccountNumber, String toAccountNumber, BigDecimal amount) {
+    private boolean transferMoney(String fromAccountNumber, String toAccountNumber, BigDecimal amount, String details) {
         Account fromAccount = accountDao.findByAccountNumber(fromAccountNumber);
         if (fromAccount == null) {
             LOGGER.warning("Invalid source account!");
@@ -139,11 +144,17 @@ public class AccountService {
         accountDao.updateEntity(fromAccount);
         accountDao.updateEntity(toAccount);
 
-        Transaction transaction = new Transaction();
-        transaction.setBalance(amount);
-        transaction.setToAccount(toAccountNumber);
-        transaction.setAccount(fromAccount);
-        transactionDao.createEntity(transaction);
+        Transaction transaction1 = new Transaction();
+        transaction1.setAmount(amount);
+        transaction1.setAccount(toAccount);
+        Transaction transaction2 = new Transaction();
+        transaction2.setAccount(fromAccount);
+        transactionDao.createEntity(transaction1);
+        transactionDao.createEntity(transaction2);
+
+        Notification notification = new Notification();
+        notification.setDetails(details);
+        notificationDao.createEntity(notification);
 
         return true;
     }

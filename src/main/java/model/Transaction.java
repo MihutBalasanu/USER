@@ -14,11 +14,8 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "to_account", length = 50)
-    private String toAccount;
-
-    @Column(name = "balance", length = 16, nullable = false)
-    private BigDecimal balance;
+    @Column(name = "amount", length = 16, nullable = false)
+    private BigDecimal amount;
 
     @Column(name = "created_time", nullable = false)
     private LocalDateTime createdTime;
@@ -29,6 +26,9 @@ public class Transaction {
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    @Column(name = "type", length = 10)
+    private String type;
 
     public Transaction() {
     }
@@ -41,20 +41,12 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getToAccount() {
-        return toAccount;
+    public BigDecimal getAmount() {
+        return amount;
     }
 
-    public void setToAccount(String toAccount) {
-        this.toAccount = toAccount;
-    }
-
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public void setBalance(BigDecimal balance) {
-        this.balance = balance;
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     public LocalDateTime getCreatedTime() {
@@ -65,6 +57,14 @@ public class Transaction {
         this.createdTime = createdTime;
     }
 
+    public String getDetails() {
+        return details;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
     public Account getAccount() {
         return account;
     }
@@ -73,33 +73,41 @@ public class Transaction {
         this.account = account;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Transaction)) return false;
         Transaction that = (Transaction) o;
         return Objects.equals(getId(), that.getId()) &&
-                Objects.equals(getToAccount(), that.getToAccount()) &&
-                Objects.equals(getBalance(), that.getBalance()) &&
+                Objects.equals(getAmount(), that.getAmount()) &&
                 Objects.equals(getCreatedTime(), that.getCreatedTime()) &&
-                Objects.equals(details, that.details) &&
-                Objects.equals(getAccount(), that.getAccount());
+                Objects.equals(getDetails(), that.getDetails()) &&
+                Objects.equals(getAccount(), that.getAccount()) &&
+                Objects.equals(getType(), that.getType());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getToAccount(), getBalance(), getCreatedTime(), details, getAccount());
+        return Objects.hash(getId(), getAmount(), getCreatedTime(), getDetails(), getAccount(), getType());
     }
 
     @Override
     public String toString() {
         return "Transaction{" +
                 "id=" + id +
-                ", toAccount=" + toAccount +
-                ", balance=" + balance +
+                ", amount=" + amount +
                 ", createdTime=" + createdTime +
                 ", details='" + details + '\'' +
                 ", account=" + account +
+                ", type='" + type + '\'' +
                 '}';
     }
 }

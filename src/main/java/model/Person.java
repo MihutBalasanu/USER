@@ -26,6 +26,9 @@ public class Person {
     @Column(name = "last_name", length = 16, nullable = false)
     private String lastName;
 
+    @Column(name = "email", length = 16)
+    private String email;
+
     public Person() {
     }
 
