@@ -4,6 +4,8 @@ package bankapp;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import utils.HibernateUtil;
+import view.LoginMenu;
+
 import java.util.logging.Logger;
 
 public class Main {
@@ -21,6 +23,8 @@ public class Main {
         } finally {
             sessionFactory.close();
         }
+        LoginMenu menu = new LoginMenu();
+        menu.displayMenu();
 
     }
 }
