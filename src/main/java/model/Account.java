@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "accounts")
-public class Account {
+public class Account extends BaseModel{
 
     @Id
     @Column(name = "account_id")
@@ -56,7 +56,7 @@ public class Account {
         this.currency = currency;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

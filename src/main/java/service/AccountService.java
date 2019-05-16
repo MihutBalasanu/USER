@@ -8,6 +8,13 @@ import model.Account;
 import model.Notification;
 import model.Transaction;
 import model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import repository.AccountRepository;
+import repository.NotificationRepository;
+import repository.TransactionRepository;
+import repository.UserRepository;
 import utils.AccountValidator;
 import utils.CurrencyType;
 import utils.MoneyTransferException;
@@ -17,20 +24,28 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.logging.Logger;
 
+@Service("accountService")
+@Transactional(readOnly = true, rollbackFor = Exception.class)
 public class AccountService {
 
-    private AccountDao accountDao = new AccountDao();
-    private UserDao userDao;
-    private TransactionDao transactionDao;
-    private NotificationDao notificationDao;
+    @Autowired
+    private AccountDao accountDao;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
-    public AccountService() {
-        accountDao = new AccountDao();
-        userDao = new UserDao();
-        transactionDao = new TransactionDao();
-    }
-
+    @Transactional
     public Account createAccount() {
         Scanner scanner = new Scanner(System.in);
         boolean isValidAccount = false;
@@ -49,7 +64,7 @@ public class AccountService {
         Account account = new Account(accountID, balance, currency);
         account.setUser(SessionUtil.user);
 
-        accountDao.createEntity(account);
+        accountRepository.save(account);
         return account;
     }
 
@@ -149,12 +164,12 @@ public class AccountService {
         transaction1.setAccount(toAccount);
         Transaction transaction2 = new Transaction();
         transaction2.setAccount(fromAccount);
-        transactionDao.createEntity(transaction1);
-        transactionDao.createEntity(transaction2);
+        transactionRepository.save(transaction1);
+        transactionRepository.save(transaction2);
 
         Notification notification = new Notification();
         notification.setDetails(details);
-        notificationDao.createEntity(notification);
+        notificationRepository.save(notification);
 
         return true;
     }

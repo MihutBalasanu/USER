@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "notifications")
-public class Notification {
+public class Notification extends BaseModel{
 
 
     @Id
@@ -30,7 +30,7 @@ public class Notification {
     public Notification() {
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

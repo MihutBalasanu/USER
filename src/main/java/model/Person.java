@@ -6,7 +6,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "persons")
-public class Person {
+public class Person extends BaseModel {
 
     @Id
     @Column(name = "person_id")
@@ -32,7 +32,7 @@ public class Person {
     public Person() {
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 

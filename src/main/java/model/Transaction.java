@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "transactions")
-public class Transaction {
+public class Transaction extends BaseModel{
 
     @Id
     @Column(name = "transaction_id")
@@ -33,7 +33,7 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
