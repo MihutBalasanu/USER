@@ -37,8 +37,22 @@ public class User extends BaseModel{
     @OneToOne(mappedBy = "user")
     private Person person;
 
+    @OneToOne(mappedBy = "user")
+    private Authentication authentication;
+
     public User() {
     }
+
+    public User(Authentication authentication) {
+        this.authentication = authentication;
+    }
+
+    public User(String username, String password) {
+        super();
+        this.username = username;
+        this.password = password;
+    }
+
 
     public long getId() {
         return id;
@@ -104,6 +118,14 @@ public class User extends BaseModel{
         this.person = person;
     }
 
+    public Authentication getAuthentication() {
+        return authentication;
+    }
+
+    public void setAuthentication(Authentication authentication) {
+        this.authentication = authentication;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,12 +138,13 @@ public class User extends BaseModel{
                 Objects.equals(getUpdatedTime(), user.getUpdatedTime()) &&
                 Objects.equals(getAccounts(), user.getAccounts()) &&
                 Objects.equals(getNotifications(), user.getNotifications()) &&
-                Objects.equals(getPerson(), user.getPerson());
+                Objects.equals(getPerson(), user.getPerson()) &&
+                Objects.equals(getAuthentication(), user.getAuthentication());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getUsername(), getPassword(), getCreatedTime(), getUpdatedTime(), getAccounts(), getNotifications(), getPerson());
+        return Objects.hash(getId(), getUsername(), getPassword(), getCreatedTime(), getUpdatedTime(), getAccounts(), getNotifications(), getPerson(), getAuthentication());
     }
 
     @Override
@@ -135,6 +158,7 @@ public class User extends BaseModel{
                 ", accounts=" + accounts +
                 ", notifications=" + notifications +
                 ", person=" + person +
+                ", authentication=" + authentication +
                 '}';
     }
 }

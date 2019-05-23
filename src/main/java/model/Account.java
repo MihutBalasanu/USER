@@ -1,10 +1,10 @@
 package model;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.*;
 
 @Entity
 @Table(name = "accounts")
@@ -46,6 +46,12 @@ public class Account extends BaseModel{
         this.accountNumber = accountNumber;
         this.balance = balance;
         this.currency = currency;
+    }
+
+    public Account(User user, String accountNumber, String accountType) {
+        this.user = user;
+        this.accountNumber = accountNumber;
+        this.accountType = accountType;
     }
 
     public String getCurrency() {

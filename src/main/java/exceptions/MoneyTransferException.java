@@ -1,4 +1,4 @@
-package utils;
+package exceptions;
 
 public class MoneyTransferException extends Exception{
     public MoneyTransferException(String errorMessage, Throwable err) {

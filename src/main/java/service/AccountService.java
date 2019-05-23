@@ -1,24 +1,24 @@
 package service;
 
-import dao.AccountDao;
-import dao.NotificationDao;
-import dao.TransactionDao;
-import dao.UserDao;
+import exceptions.MoneyTransferException;
 import model.Account;
 import model.Notification;
 import model.Transaction;
-import model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import repository.AccountRepository;
 import repository.NotificationRepository;
 import repository.TransactionRepository;
 import repository.UserRepository;
 import utils.AccountValidator;
 import utils.CurrencyType;
-import utils.MoneyTransferException;
 import utils.SessionUtil;
+
 import java.math.BigDecimal;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -28,8 +28,6 @@ import java.util.logging.Logger;
 @Transactional(readOnly = true, rollbackFor = Exception.class)
 public class AccountService {
 
-    @Autowired
-    private AccountDao accountDao;
 
     @Autowired
     private AccountRepository accountRepository;
@@ -43,29 +41,36 @@ public class AccountService {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
     private final static Logger LOGGER = Logger.getLogger(Logger.class.getName());
 
     @Transactional
-    public Account createAccount() {
-        Scanner scanner = new Scanner(System.in);
-        boolean isValidAccount = false;
-        String accountID = "";
-        while (!isValidAccount) {
-            System.out.println();
-            System.out.print("Account number (RO + 22 characters): ");
-            accountID = scanner.nextLine();
-            isValidAccount = AccountValidator.validateId(accountID);
-        }
-        System.out.print("Amount of money: ");
-        BigDecimal balance = setBalance(scanner);
-        System.out.print("Currency [RON/EUR]: ");
-        String currency = setCurrency(scanner);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public Account createAccount(@RequestParam(value = "token") String token) {
 
-        Account account = new Account(accountID, balance, currency);
-        account.setUser(SessionUtil.user);
+            Scanner scanner = new Scanner(System.in);
+            boolean isValidAccount = false;
+            String accountID = "";
+            while (!isValidAccount) {
+                System.out.println();
+                System.out.print("Account number (RO + 22 characters): ");
+                accountID = scanner.nextLine();
+                isValidAccount = AccountValidator.validateId(accountID);
+            }
+            System.out.print("Amount of money: ");
+            BigDecimal balance = setBalance(scanner);
+            System.out.print("Currency [RON/EUR]: ");
+            String currency = setCurrency(scanner);
 
-        accountRepository.save(account);
-        return account;
+            Account account = new Account(accountID, balance, currency);
+            account.setUser(SessionUtil.user);
+
+            accountRepository.save(account);
+            return account;
+
     }
 
     public String setCurrency(Scanner scanner) {
@@ -107,8 +112,10 @@ public class AccountService {
         }
         return balance;
     }
-
-    public void makePayment(User user) throws MoneyTransferException {
+    @Transactional
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void makePayment(@RequestParam(value = "token") String token) throws MoneyTransferException {
         Scanner scanner = new Scanner(System.in);
         System.out.println();
         System.out.print("From account: ");
@@ -132,12 +139,12 @@ public class AccountService {
     }
 
     private boolean transferMoney(String fromAccountNumber, String toAccountNumber, BigDecimal amount, String details) {
-        Account fromAccount = accountDao.findByAccountNumber(fromAccountNumber);
+        Account fromAccount = accountRepository.findByAccountNumber(fromAccountNumber);
         if (fromAccount == null) {
             LOGGER.warning("Invalid source account!");
             return false;
         }
-        Account toAccount = accountDao.findByAccountNumber(toAccountNumber);
+        Account toAccount = accountRepository.findByAccountNumber(toAccountNumber);
         if (toAccount == null) {
             LOGGER.warning("Invalid destination account!");
             return false;
@@ -156,8 +163,8 @@ public class AccountService {
         fromAccount.setBalance(fromAccount.getBalance().subtract(amount));
         toAccount.setBalance(toAccount.getBalance().add(amount));
 
-        accountDao.updateEntity(fromAccount);
-        accountDao.updateEntity(toAccount);
+        accountRepository.save(fromAccount);
+        accountRepository.save(toAccount);
 
         Transaction transaction1 = new Transaction();
         transaction1.setAmount(amount);
@@ -172,6 +179,18 @@ public class AccountService {
         notificationRepository.save(notification);
 
         return true;
+    }
+
+    public Account findById(Long id){
+        return accountRepository.findById(id);
+    }
+
+    public void deleteAccountById(Long id){
+        accountRepository.delete(id);
+    }
+
+    public Account updateAccount(Account account){
+        return accountRepository.save(account);
     }
 
 }
